@@ -23,8 +23,7 @@ define( 'GF_GOOGLE_SMS_OTP_VERSION', '1.0.0' );
 
 
 // Require Main Files
-require plugin_dir_path( __FILE__ ) . 'admin/admin_class.php';
-new Admin_Class(GF_GOOGLE_SMS_OTP_DOMAIN,GF_GOOGLE_SMS_OTP_VERSION);
+require plugin_dir_path( __FILE__ ) . 'app/app_class.php';
+new App_Class(GF_GOOGLE_SMS_OTP_DOMAIN,GF_GOOGLE_SMS_OTP_VERSION);
 
-require plugin_dir_path( __FILE__ ) . 'public/public_class.php';
-new Public_Class(GF_GOOGLE_SMS_OTP_DOMAIN,GF_GOOGLE_SMS_OTP_VERSION);
+

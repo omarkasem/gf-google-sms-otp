@@ -1,6 +1,6 @@
 <?php
 namespace Plugin_Name;
-class Admin_Class{
+class App_Class{
     private $plugin_name;
     private $version;
 
@@ -9,11 +9,11 @@ class Admin_Class{
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->register_hooks();
-		add_action( 'gform_loaded', array( $this, 'load' ), 5 );
+		
 	}
 
 	public function register_hooks(){
-	
+        add_action( 'gform_loaded', array( $this, 'load' ), 5 );
 	}
 
     public static function load() {
@@ -26,7 +26,6 @@ class Admin_Class{
 
         \GFAddOn::register( 'GFGoogleSMSOTP' );
     }
-
 
 
 

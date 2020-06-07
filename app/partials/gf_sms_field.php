@@ -43,7 +43,7 @@ class GF_Google_SMS_OTP extends GF_Field {
 			'description_setting',
 			'rules_setting',
 			'placeholder_setting',
-			'firebase_config_info',
+			'firebase_countries',
 			'css_class_setting',
 			'size_setting',
 			'admin_label_setting',
@@ -74,12 +74,12 @@ class GF_Google_SMS_OTP extends GF_Field {
 
 		// initialize the fields custom settings
 		$script .= "jQuery(document).bind('gform_load_field_settings', function (event, field, form) {" .
-		           "var firebase_config_info = field.firebase_config_info == undefined ? '' : field.firebase_config_info;" .
-		           "jQuery('#firebase_config_info').val(firebase_config_info);" .
+		           "var firebase_countries = field.firebase_countries == undefined ? '' : field.firebase_countries;" .
+		           "jQuery('#firebase_countries').val(firebase_countries).trigger('change');" .
 		           "});" . PHP_EOL;
 
 		// saving the simple setting
-		$script .= "function setInputFirebaseConfig(value) {SetFieldProperty('firebase_config_info', value);}" . PHP_EOL;
+		$script .= "function setWhitelistedCountries(value) {SetFieldProperty('firebase_countries', value);}" . PHP_EOL;
 		return $script;
 	}
 
@@ -103,13 +103,13 @@ class GF_Google_SMS_OTP extends GF_Field {
 
 		$value = esc_attr( $value );
 
-		// Get the value of the firebase_config_info property for the current field.
-		$firebase_config_info = $this->firebase_config_info;
+		// Get the value of the firebase_countries property for the current field.
+		$firebase_countries = $this->firebase_countries;
 
 		// Prepare the input classes.
 		$size         = $this->size;
 		$class_suffix = $is_entry_detail ? '_admin' : '';
-		$class        = $size . $class_suffix . ' ' . $firebase_config_info;
+		$class        = $size . $class_suffix . ' ' . $firebase_countries;
 
 		// Prepare the other input attributes.
 		$tabindex              = $this->get_tabindex();

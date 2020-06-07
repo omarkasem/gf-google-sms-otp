@@ -6,14 +6,13 @@ function gf_google_clean_config(config) {
 	return eval('(' + config + ')');
 }
 
-var firebaseConfig = gf_google_admin_script_strings.firebaseConfig;
+var firebaseConfig = firebase_data.firebaseConfig;
 firebaseConfig = gf_google_clean_config(firebaseConfig);
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-
 var ui = new firebaseui.auth.AuthUI(firebase.auth());
-firebase.auth().languageCode = 'it';
+firebase.auth();
 var uiConfig = {
 	callbacks: {
 		signInSuccessWithAuthResult: function (authResult, redirectUrl) {
@@ -33,11 +32,19 @@ var uiConfig = {
 	signInOptions: [
 		{
 			provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-			defaultCountry: 'EG',
-			whitelistedCountries: ['EG'],
 		},
 	],
 };
+
+if (
+	typeof firebase_data.firebase_countries !== 'undefined' &&
+	firebase_data.firebase_countries.length > 0
+) {
+	uiConfig.signInOptions[0].defaultCountry =
+		firebase_data.firebase_countries[0];
+	uiConfig.signInOptions[0].whitelistedCountries =
+		firebase_data.firebase_countries;
+}
 
 ui.start('.gf_google_sms_otp', uiConfig);
 
