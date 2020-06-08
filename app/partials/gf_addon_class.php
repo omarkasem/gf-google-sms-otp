@@ -109,7 +109,7 @@ class GFGoogleSMSOTP extends GFAddOn {
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/css/select2.min.css',
 				'version' => $this->_version,
 				'enqueue' => array(
-					array( 'field_types' => array( GF_GOOGLE_SMS_OTP_DOMAIN ) )
+					array( 'admin_page' => array( 'form_editor' ), )
 				)
 			)
 		);
@@ -125,7 +125,7 @@ class GFGoogleSMSOTP extends GFAddOn {
 				'version' => $this->_version,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
-					array( 'field_types' => array( GF_GOOGLE_SMS_OTP_DOMAIN ) ),
+					array( 'admin_page' => array( 'form_editor' ) ),
 				),
 			),
 
@@ -135,7 +135,7 @@ class GFGoogleSMSOTP extends GFAddOn {
 				'version' => $this->_version,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
-					array( 'field_types' => array( GF_GOOGLE_SMS_OTP_DOMAIN ) ),
+					array( 'admin_page' => array( 'form_editor' ) ),
 				),
 			),
 		);
@@ -156,7 +156,7 @@ class GFGoogleSMSOTP extends GFAddOn {
 
 	public function tooltips( $tooltips ) {
 		$simple_tooltips = array(
-			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Firebase Whitelisted Countries', GF_GOOGLE_SMS_OTP_DOMAIN ), esc_html__( 'Select the countries that will show up in the phone validation. <br> The first one will be the default. <br> Leave empty to show all countries.', GF_GOOGLE_SMS_OTP_DOMAIN ) ),
+			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Firebase Whitelisted Countries', GF_GOOGLE_SMS_OTP_DOMAIN ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', GF_GOOGLE_SMS_OTP_DOMAIN ) ),
 		);
 
 		return array_merge( $tooltips, $simple_tooltips );

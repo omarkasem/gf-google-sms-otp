@@ -103,13 +103,10 @@ class GF_Google_SMS_OTP extends GF_Field {
 
 		$value = esc_attr( $value );
 
-		// Get the value of the firebase_countries property for the current field.
-		$firebase_countries = $this->firebase_countries;
-
 		// Prepare the input classes.
 		$size         = $this->size;
 		$class_suffix = $is_entry_detail ? '_admin' : '';
-		$class        = $size . $class_suffix . ' ' . $firebase_countries;
+		$class        = $size . $class_suffix;
 
 		// Prepare the other input attributes.
 		$tabindex              = $this->get_tabindex();
@@ -120,9 +117,10 @@ class GF_Google_SMS_OTP extends GF_Field {
 		$disabled_text         = $is_form_editor ? 'disabled="disabled"' : '';
 
 		// Prepare the input tag for this field.
-		$input = "<div id='{$field_id}' class='{$class} gf_google_sms_otp'>";
+		$input = "<input name='input_{$id}' id='{$field_id}' type='hidden' value='{$value}' class='{$class} gf_google_sms_otp_field' {$tabindex} {$logic_event} {$placeholder_attribute} {$required_attribute} {$invalid_attribute} {$disabled_text}/>";
 
-		return sprintf( "<div class='ginput_container ginput_container_%s'>%s</div>", $this->type, $input );
+
+		return sprintf( "<div class='gf_google_sms_otp'></div><div class='ginput_container ginput_container_%s'>%s</div>", $this->type, $input );
 	}
 }
 

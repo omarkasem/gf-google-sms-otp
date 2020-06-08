@@ -16,9 +16,20 @@ firebase.auth();
 var uiConfig = {
 	callbacks: {
 		signInSuccessWithAuthResult: function (authResult, redirectUrl) {
-			var uid = authResult.user.uid;
+			console.log(authResult);
+			var user_token = authResult.user.xa;
 			var phone_number = authResult.user.phoneNumber;
-			elnoor_register_user(uid, phone_number);
+			jQuery('.gf_google_sms_otp_field').attr('type', 'text').val(phone_number);
+			jQuery('<input>')
+				.attr('type', 'hidden')
+				.attr('name', 'gf_firebase_user_token')
+				.val(user_token)
+				.insertAfter('.gf_google_sms_otp_field');
+			jQuery('<input>')
+				.attr('type', 'hidden')
+				.attr('name', 'gf_firebase_api_key')
+				.val(firebaseConfig.apiKey)
+				.insertAfter('.gf_google_sms_otp_field');
 		},
 		uiShown: function () {
 			document.getElementsByClassName(
@@ -26,7 +37,6 @@ var uiConfig = {
 			)[0].style.display = 'none';
 		},
 	},
-	// Will use popup for IDP Providers sign-in flow instead of the default, redirect.
 	signInFlow: 'popup',
 	signInSuccessUrl: null,
 	signInOptions: [
@@ -47,17 +57,3 @@ if (
 }
 
 ui.start('.gf_google_sms_otp', uiConfig);
-
-function elnoor_register_user(uid, phone) {
-	jQuery.ajax({
-		type: 'POST',
-		url: ajax_object.ajax_url,
-		data: { action: 'elnoorRegisterUser', uid: uid, phone: phone },
-		success: function (response) {
-			location.reload();
-		},
-		error: function (error) {
-			console.log(error);
-		},
-	});
-}
