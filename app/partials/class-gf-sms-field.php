@@ -11,7 +11,7 @@ class GF_SMS_Field extends \GF_Field {
 
 
 	public function get_form_editor_field_title() {
-		return esc_attr__( 'Google SMS OTP', 'gf-free-sms-verification' );
+		return esc_attr__( 'Free SMS Verification', 'gf-free-sms-verification' );
 	}
 
 	public function get_form_editor_button() {
@@ -86,8 +86,13 @@ class GF_SMS_Field extends \GF_Field {
 		$disabled_text         = $is_form_editor ? 'disabled="disabled"' : '';
 
 		// Prepare the input tag for this field.
-		$input = "<input name='input_{$id}' id='{$field_id}' type='hidden' value='{$value}' class='{$class} gf_google_sms_otp_field' {$tabindex} {$logic_event} {$placeholder_attribute} {$required_attribute} {$invalid_attribute} {$disabled_text}/>";
-
+		$input  = "<input name='input_{$id}' id='{$field_id}' type='hidden' value='{$value}' class='{$class} gf_google_sms_otp_field' {$tabindex} {$logic_event} {$placeholder_attribute} {$required_attribute} {$invalid_attribute} {$disabled_text}/>";
+		$input .= '
+		<style>
+		.mdl-textfield__label{top:32px;left:7px;}.firebaseui-container.mdl-card{float:left;}
+		
+		</style>
+		';
 		return sprintf( "<div class='gf_google_sms_otp'></div><div class='ginput_container ginput_container_%s'>%s</div>", $this->type, $input );
 	}
 }

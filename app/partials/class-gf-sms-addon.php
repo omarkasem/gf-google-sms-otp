@@ -5,7 +5,7 @@ namespace GF_Free_SMS_Verify;
 
 class GF_SMS_Addon extends \GFAddOn {
 
-	protected $_version                  = 'gf-free-sms-verification'_VERSION;
+	protected $_version                  = GF_FREE_SMS_VERIFICATION_VERSION;
 	protected $_min_gravityforms_version = '1.9';
 	protected $_slug                     = 'gf-free-sms-verification';
 	protected $_path                     = 'gf_addon_class.php';
@@ -57,39 +57,40 @@ class GF_SMS_Addon extends \GFAddOn {
 
 		$exist = false;
 		foreach ( $form['fields'] as $key => $field ) {
-			if ( 'gf-google-sms-otp' === $field['type'] ) {
+			if ( 'gf-free-sms-verification' === $field['type'] ) {
 				$firebase_countries = $field['firebase_countries'];
 				$exist              = true;
 			}
 		}
+
 		if ( false === $exist ) {
 			return;}
 
 		// Enqueue Styles
 		$rtl = intval( $this->get_plugin_setting( 'gf_sms_firebase_rtl' ) );
-		wp_enqueue_style( 'gf-free-sms-verification' . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), $this->version, 'all' );
+		wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), $this->version, 'all' );
 
 		if ( 1 === $rtl ) {
-			wp_enqueue_style( 'gf-free-sms-verification' . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), $this->version, 'all' );
+			wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), $this->version, 'all' );
 		}
 
 		// Enqueue Scripts
 		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
 		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
 
-		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), $this->_version, false );
 
-		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), $this->_version, false );
 
-		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_ui_auth__' . $firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__' . $firebase_lang . '.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_ui_auth__' . $firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__' . $firebase_lang . '.js', array( 'jquery' ), $this->_version, false );
 
-		wp_enqueue_script( 'gf-free-sms-verification' . 'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), $this->_version, false );
 
 		$translation_array = array(
 			'firebaseConfig'     => $firebase_config,
 			'firebase_countries' => $firebase_countries,
 		);
-		wp_localize_script( 'gf-free-sms-verification' . 'public-script', 'firebase_data', $translation_array );
+		wp_localize_script( GF_FREE_SMS_VERIFICATION . 'public-script', 'firebase_data', $translation_array );
 
 	}
 
@@ -139,6 +140,7 @@ class GF_SMS_Addon extends \GFAddOn {
 	public function check_plugin_options() {
 		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
 		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
+
 		if ( '' === $firebase_config || '' === $firebase_lang ) {
 			return false;}
 		return true;

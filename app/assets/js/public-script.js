@@ -19,7 +19,10 @@ var uiConfig = {
 			console.log( authResult );
 			var user_token   = authResult.user.xa;
 			var phone_number = authResult.user.phoneNumber;
-			jQuery( '.gf_google_sms_otp_field' ).attr( 'type', 'text' ).val( phone_number );
+			jQuery( '.gf_google_sms_otp_field' )
+				.attr( 'type', 'text' )
+				.val( phone_number )
+				.prop( 'disabled', true );
 			jQuery( '<input>' )
 				.attr( 'type', 'hidden' )
 				.attr( 'name', 'gf_firebase_user_token' )
