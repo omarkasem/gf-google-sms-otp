@@ -16,7 +16,7 @@ class App {
 	public function register_hooks() {
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 		add_action( 'gform_loaded', array( $this, 'load_gravity_forms' ), 5 );
-		add_filter( 'gform_field_validation', array( $this, 'validate_form' ), 10, 4 );
+		// add_filter( 'gform_field_validation', array( $this, 'validate_form' ), 10, 4 );
 	}
 
 
@@ -33,7 +33,7 @@ class App {
 					$result['is_valid'] = false;
 					$result['message']  = __( 'There were an issue in the mobile verification', 'gf-free-sms-verification' );
 				}
-				$value                          = $this->get_user_phone( $response );
+				$value = $this->get_user_phone( $response );
 				$_POST[ 'input_' . $field->id ] = $value;
 			}
 		}
