@@ -14,7 +14,7 @@ class App {
 	}
 
 	public function register_hooks() {
-		dd_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
+		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 		add_action( 'gform_loaded', array( $this, 'load_gravity_forms' ), 5 );
 		add_filter( 'gform_field_validation', array( $this, 'validate_form' ), 10, 4 );
 	}
