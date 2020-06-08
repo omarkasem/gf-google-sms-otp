@@ -1,30 +1,19 @@
 <?php
+namespace GF_Free_SMS_Verify;
 
-if ( ! class_exists( 'GFForms' ) ) {
+if ( ! class_exists( '\GFForms' ) ) {
 	die();
 }
 
-class GF_Google_SMS_OTP extends GF_Field {
+class GF_SMS_Field extends \GF_Field {
 
-	/**
-	 * @var string $type The field type.
-	 */
-	public $type = GF_GOOGLE_SMS_OTP_DOMAIN;
+	public $type = GF_FREE_SMS_VERIFICATION;
 
-	/**
-	 * Return the field title, for use in the form editor.
-	 *
-	 * @return string
-	 */
+
 	public function get_form_editor_field_title() {
-		return esc_attr__( 'Google SMS OTP', GF_GOOGLE_SMS_OTP_DOMAIN );
+		return esc_attr__( 'Google SMS OTP', 'gf-free-sms-verification' );
 	}
 
-	/**
-	 * Assign the field button to the Advanced Fields group.
-	 *
-	 * @return array
-	 */
 	public function get_form_editor_button() {
 		return array(
 			'group' => 'advanced_fields',
@@ -32,12 +21,8 @@ class GF_Google_SMS_OTP extends GF_Field {
 		);
 	}
 
-	/**
-	 * The settings which should be available on the field in the form editor.
-	 *
-	 * @return array
-	 */
-	function get_form_editor_field_settings() {
+
+	public function get_form_editor_field_settings() {
 		return array(
 			'label_setting',
 			'description_setting',
@@ -53,45 +38,29 @@ class GF_Google_SMS_OTP extends GF_Field {
 		);
 	}
 
-	/**
-	 * Enable this field for use with conditional logic.
-	 *
-	 * @return bool
-	 */
+
 	public function is_conditional_logic_supported() {
 		return true;
 	}
 
-	/**
-	 * The scripts to be included in the form editor.
-	 *
-	 * @return string
-	 */
+
 	public function get_form_editor_inline_script_on_page_render() {
-		
-		// set the default field label for the simple type field
+
+		// set the default field label for the simple type field.
 		$script = sprintf( "function SetDefaultValues_simple(field) {field.label = '%s';}", $this->get_form_editor_field_title() ) . PHP_EOL;
 
-		// initialize the fields custom settings
+		// initialize the fields custom settings.
 		$script .= "jQuery(document).bind('gform_load_field_settings', function (event, field, form) {" .
-		           "var firebase_countries = field.firebase_countries == undefined ? '' : field.firebase_countries;" .
-		           "jQuery('#firebase_countries').val(firebase_countries).trigger('change');" .
-		           "});" . PHP_EOL;
+				   "var firebase_countries = field.firebase_countries == undefined ? '' : field.firebase_countries;" .
+				   "jQuery('#firebase_countries').val(firebase_countries).trigger('change');" .
+				   '});' . PHP_EOL;
 
-		// saving the simple setting
+		// saving the simple setting.
 		$script .= "function setWhitelistedCountries(value) {SetFieldProperty('firebase_countries', value);}" . PHP_EOL;
 		return $script;
 	}
 
-	/**
-	 * Define the fields inner markup.
-	 *
-	 * @param array $form The Form Object currently being processed.
-	 * @param string|array $value The field value. From default/dynamic population, $_POST, or a resumed incomplete submission.
-	 * @param null|array $entry Null or the Entry Object currently being edited.
-	 *
-	 * @return string
-	 */
+
 	public function get_field_input( $form, $value = '', $entry = null ) {
 		$id              = absint( $this->id );
 		$form_id         = absint( $form['id'] );
@@ -99,7 +68,7 @@ class GF_Google_SMS_OTP extends GF_Field {
 		$is_form_editor  = $this->is_form_editor();
 
 		// Prepare the value of the input ID attribute.
-		$field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
+		$field_id = $is_entry_detail || $is_form_editor || 0 == $form_id ? "input_$id" : 'input_' . $form_id . "_$id";
 
 		$value = esc_attr( $value );
 
@@ -119,9 +88,8 @@ class GF_Google_SMS_OTP extends GF_Field {
 		// Prepare the input tag for this field.
 		$input = "<input name='input_{$id}' id='{$field_id}' type='hidden' value='{$value}' class='{$class} gf_google_sms_otp_field' {$tabindex} {$logic_event} {$placeholder_attribute} {$required_attribute} {$invalid_attribute} {$disabled_text}/>";
 
-
 		return sprintf( "<div class='gf_google_sms_otp'></div><div class='ginput_container ginput_container_%s'>%s</div>", $this->type, $input );
 	}
 }
 
-GF_Fields::register( new GF_Google_SMS_OTP() );
+\GF_Fields::register( new GF_SMS_Field() );

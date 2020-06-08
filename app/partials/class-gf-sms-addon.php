@@ -1,103 +1,95 @@
 <?php
+namespace GF_Free_SMS_Verify;
 
-GFForms::include_addon_framework();
+\GFForms::include_addon_framework();
 
-class GFGoogleSMSOTP extends GFAddOn {
+class GF_SMS_Addon extends \GFAddOn {
 
-	protected $_version = GF_GOOGLE_SMS_OTP_VERSION;
+	protected $_version                  = 'gf-free-sms-verification'_VERSION;
 	protected $_min_gravityforms_version = '1.9';
-	protected $_slug = GF_GOOGLE_SMS_OTP_DOMAIN;
-	protected $_path = 'gf_addon_class.php';
-	protected $_full_path = __FILE__;
-	protected $_title = 'Gravity Forms Google SMS OTP';
-	protected $_short_title = 'Google SMS OTP';
+	protected $_slug                     = 'gf-free-sms-verification';
+	protected $_path                     = 'gf_addon_class.php';
+	protected $_full_path                = __FILE__;
+	protected $_title                    = 'Gravity Forms Google SMS OTP';
+	protected $_short_title              = 'Google SMS OTP';
 
-	/**
-	 * @var object $_instance If available, contains an instance of this class.
-	 */
+
 	private static $_instance = null;
 
-	/**
-	 * Returns an instance of this class, and stores it in the $_instance property.
-	 *
-	 * @return object $_instance An instance of this class.
-	 */
+
 	public static function get_instance() {
-		if ( self::$_instance == null ) {
+		if ( null === self::$_instance ) {
 			self::$_instance = new self();
 		}
 
 		return self::$_instance;
 	}
 
-	/**
-	 * Include the field early so it is available when entry exports are being performed.
-	 */
 	public function pre_init() {
 		parent::pre_init();
 
 		if ( $this->is_gravityforms_supported() && class_exists( 'GF_Field' ) ) {
-			require_once( plugin_dir_path( __FILE__ ) .'gf_sms_field.php' );
+			require_once plugin_dir_path( __FILE__ ) . 'class-gf-sms-field.php';
 		}
 	}
 
 	public function init_admin() {
 		parent::init_admin();
 		add_filter( 'gform_tooltips', array( $this, 'tooltips' ) );
-		add_action( 'gform_field_standard_settings', array($this,'my_standard_settings'), 10, 2 );
+		add_action( 'gform_field_standard_settings', array( $this, 'my_standard_settings' ), 10, 2 );
 	}
 
-	public function localize_scripts(){
-		
+	public function localize_scripts() {
+
 		$translation_array = array(
 			'a_value' => $text,
 		);
 		wp_localize_script( 'gf_google_admin_script', 'object_name', $translation_array );
 	}
 
-	public function init_frontend(){
-		add_action( 'gform_enqueue_scripts', array($this, 'enq_styles_scripts'),10,2 );
+	public function init_frontend() {
+		add_action( 'gform_enqueue_scripts', array( $this, 'enq_styles_scripts' ), 10, 2 );
 	}
 
-	public function enq_styles_scripts($form, $is_ajax){
-		if(!$this->check_plugin_options($form)){return;}
-	
+	public function enq_styles_scripts( $form, $is_ajax ) {
+		if ( ! $this->check_plugin_options( $form ) ) {
+			return;}
+
 		$exist = false;
-		foreach ($form['fields'] as $key => $field) {
-			if($field['type'] === 'gf-google-sms-otp'){
+		foreach ( $form['fields'] as $key => $field ) {
+			if ( 'gf-google-sms-otp' === $field['type'] ) {
 				$firebase_countries = $field['firebase_countries'];
-				$exist = true;
+				$exist              = true;
 			}
 		}
-		if($exist == false){return;}
-	
-		// Enqueue Styles
-		$rtl = intval($this->get_plugin_setting( 'gf_sms_firebase_rtl'));
-		wp_enqueue_style( GF_GOOGLE_SMS_OTP_DOMAIN.'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), $this->version, 'all' );
+		if ( false === $exist ) {
+			return;}
 
-		if($rtl === 1){
-			wp_enqueue_style( GF_GOOGLE_SMS_OTP_DOMAIN.'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), $this->version, 'all' );
+		// Enqueue Styles
+		$rtl = intval( $this->get_plugin_setting( 'gf_sms_firebase_rtl' ) );
+		wp_enqueue_style( 'gf-free-sms-verification' . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), $this->version, 'all' );
+
+		if ( 1 === $rtl ) {
+			wp_enqueue_style( 'gf-free-sms-verification' . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), $this->version, 'all' );
 		}
 
-
 		// Enqueue Scripts
-		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config');
-		$firebase_lang = $this->get_plugin_setting( 'gf_sms_firebase_language');
-		
-		wp_enqueue_script( GF_GOOGLE_SMS_OTP_DOMAIN.'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), $this->_version, false );
+		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
+		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
 
-		wp_enqueue_script( GF_GOOGLE_SMS_OTP_DOMAIN.'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), $this->_version, false );
 
-		wp_enqueue_script( GF_GOOGLE_SMS_OTP_DOMAIN.'firebase_ui_auth__'.$firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__'.$firebase_lang.'.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), $this->_version, false );
 
-		wp_enqueue_script( GF_GOOGLE_SMS_OTP_DOMAIN.'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), $this->_version, false );
-		
+		wp_enqueue_script( 'gf-free-sms-verification' . 'firebase_ui_auth__' . $firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__' . $firebase_lang . '.js', array( 'jquery' ), $this->_version, false );
+
+		wp_enqueue_script( 'gf-free-sms-verification' . 'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), $this->_version, false );
+
 		$translation_array = array(
-			'firebaseConfig' => $firebase_config,
-			'firebase_countries'=>$firebase_countries,
+			'firebaseConfig'     => $firebase_config,
+			'firebase_countries' => $firebase_countries,
 		);
-		wp_localize_script( GF_GOOGLE_SMS_OTP_DOMAIN.'public-script', 'firebase_data', $translation_array );
-
+		wp_localize_script( 'gf-free-sms-verification' . 'public-script', 'firebase_data', $translation_array );
 
 	}
 
@@ -105,13 +97,13 @@ class GFGoogleSMSOTP extends GFAddOn {
 	public function styles() {
 		$styles = array(
 			array(
-				'handle'  => GF_GOOGLE_SMS_OTP_DOMAIN.'select2',
+				'handle'  => 'gf-free-sms-verification' . 'select2',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/css/select2.min.css',
 				'version' => $this->_version,
 				'enqueue' => array(
-					array( 'admin_page' => array( 'form_editor' ), )
-				)
-			)
+					array( 'admin_page' => array( 'form_editor' ) ),
+				),
+			),
 		);
 
 		return array_merge( parent::styles(), $styles );
@@ -120,8 +112,8 @@ class GFGoogleSMSOTP extends GFAddOn {
 	public function scripts() {
 		$scripts = array(
 			array(
-				'handle'  => GF_GOOGLE_SMS_OTP_DOMAIN.'select2',
-				'src'     =>  plugin_dir_url( __DIR__ ) . 'assets/js/select2.min.js',
+				'handle'  => 'gf-free-sms-verification' . 'select2',
+				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/select2.min.js',
 				'version' => $this->_version,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
@@ -130,8 +122,8 @@ class GFGoogleSMSOTP extends GFAddOn {
 			),
 
 			array(
-				'handle'  => GF_GOOGLE_SMS_OTP_DOMAIN.'admin_script',
-				'src'     =>  plugin_dir_url( __DIR__ ) . 'assets/js/admin-script.js',
+				'handle'  => 'gf-free-sms-verification' . 'admin_script',
+				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/admin-script.js',
 				'version' => $this->_version,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
@@ -143,12 +135,12 @@ class GFGoogleSMSOTP extends GFAddOn {
 		return array_merge( parent::scripts(), $scripts );
 	}
 
-	// # SCRIPTS & STYLES -----------------------------------------------------------------------------------------------
 
-	public function check_plugin_options(){
-		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config');
-		$firebase_lang = $this->get_plugin_setting( 'gf_sms_firebase_language');
-		if($firebase_config == '' || $firebase_lang == ''){return false;}
+	public function check_plugin_options() {
+		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
+		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
+		if ( '' === $firebase_config || '' === $firebase_lang ) {
+			return false;}
 		return true;
 	}
 
@@ -156,18 +148,14 @@ class GFGoogleSMSOTP extends GFAddOn {
 
 	public function tooltips( $tooltips ) {
 		$simple_tooltips = array(
-			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Firebase Whitelisted Countries', GF_GOOGLE_SMS_OTP_DOMAIN ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', GF_GOOGLE_SMS_OTP_DOMAIN ) ),
+			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Firebase Whitelisted Countries', 'gf-free-sms-verification' ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', 'gf-free-sms-verification' ) ),
 		);
 
 		return array_merge( $tooltips, $simple_tooltips );
 	}
 
-
-	// # FIELD SETTINGS -------------------------------------------------------------------------------------------------
-
-	
-	function my_standard_settings( $position, $form_id ) {
-		if ( $position == 250 ) {
+	public function my_standard_settings( $position, $form_id ) {
+		if ( 250 === $position ) {
 			?>
 			<style>
 				#gform_fields li #field_settings li.select2-selection__choice{
@@ -176,13 +164,15 @@ class GFGoogleSMSOTP extends GFAddOn {
 			</style>
 			<li class="firebase_countries field_setting">
 				<label for="firebase_countries" class="section_label">
-					<?php esc_html_e( 'Firebase Whitelisted Countries', GF_GOOGLE_SMS_OTP_DOMAIN ); ?>
-					<?php gform_tooltip( 'firebase_countries' ) ?>
+					<?php esc_html_e( 'Firebase Whitelisted Countries', 'gf-free-sms-verification' ); ?>
+					<?php gform_tooltip( 'firebase_countries' ); ?>
 				</label>
 				<select class="gf_sms_select2" multiple="multiple" style="width:100%;" id="firebase_countries" onkeyup="setWhitelistedCountries(jQuery(this).val());" onchange="setWhitelistedCountries(jQuery(this).val());">
-					<?php foreach($this->get_whitelisted_countries() as $key => $val){
-						echo '<option value="'.$key.'">'.$val.'</option>';
-					} ?>
+					<?php
+					foreach ( $this->get_whitelisted_countries() as $key => $val ) {
+						echo '<option value="' . $key . '">' . $val . '</option>';
+					}
+					?>
 				</select>
 			</li>
 
@@ -195,54 +185,54 @@ class GFGoogleSMSOTP extends GFAddOn {
 	public function plugin_settings_fields() {
 		return array(
 			array(
-				'title'  => esc_html__( 'Google SMS OTP', GF_GOOGLE_SMS_OTP_DOMAIN ),
+				'title'  => esc_html__( 'Google SMS OTP', 'gf-free-sms-verification' ),
 				'fields' => array(
 					array(
-						'label'   => esc_html__( 'Firebase Config Information', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'type'    => 'textarea',
-						'name'    => 'gf_sms_firebase_config',
-						'required'=>true,
-						'tooltip' => esc_html__( 'This is the tooltip', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'class'   => 'medium merge-tag-support mt-position-right',
+						'label'    => esc_html__( 'Firebase Config Information', 'gf-free-sms-verification' ),
+						'type'     => 'textarea',
+						'name'     => 'gf_sms_firebase_config',
+						'required' => true,
+						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'class'    => 'medium merge-tag-support mt-position-right',
 					),
 
 					array(
-						'label'   => esc_html__( 'Verification Field Language', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'type'    => 'select',
-						'name'    => 'gf_sms_firebase_language',
-						'required'=>true,
-						'tooltip' => esc_html__( 'This is the tooltip', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'choices'=>$this->get_supported_languages(),
+						'label'    => esc_html__( 'Verification Field Language', 'gf-free-sms-verification' ),
+						'type'     => 'select',
+						'name'     => 'gf_sms_firebase_language',
+						'required' => true,
+						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'choices'  => $this->get_supported_languages(),
 					),
 					array(
-						'label'   => esc_html__( 'Enable RTL (Right to left)', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'type'    => 'radio',
-						'name'    => 'gf_sms_firebase_rtl',
-						'required'=>true,
-						'tooltip' => esc_html__( 'This is the tooltip', GF_GOOGLE_SMS_OTP_DOMAIN ),
-						'choices' => array(
+						'label'    => esc_html__( 'Enable RTL (Right to left)', 'gf-free-sms-verification' ),
+						'type'     => 'radio',
+						'name'     => 'gf_sms_firebase_rtl',
+						'required' => true,
+						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'choices'  => array(
 							array(
-								'label' => esc_html__( 'Yes', GF_GOOGLE_SMS_OTP_DOMAIN ),
-								'value'=>1,
+								'label' => esc_html__( 'Yes', 'gf-free-sms-verification' ),
+								'value' => 1,
 							),
 							array(
-								'label' => esc_html__( 'No', GF_GOOGLE_SMS_OTP_DOMAIN ),
-								'value'=>0,
+								'label'         => esc_html__( 'No', 'gf-free-sms-verification' ),
+								'value'         => 0,
 								'default_value' => true,
 							),
 						),
 					),
 				),
 			),
-	
+
 		);
 
 	}
 
 
 
-	public function get_whitelisted_countries(){
-		$string = "| AF | Afghanistan |
+	public function get_whitelisted_countries() {
+		$string    = "| AF | Afghanistan |
 		| AX | Åland Islands |
 		| AL | Albania |
 		| DZ | Algeria |
@@ -489,19 +479,19 @@ class GFGoogleSMSOTP extends GFAddOn {
 		| ZM | Zambia |
 		| ZW | Zimbabwe |
 		";
-		$new = explode('|',$string);
-		$new = array_map('trim', $new);
-		$new = array_values(array_filter($new));
-		$newArray = [];
-		for ($i = 0; $i < count($new); $i += 2){
-			$newArray[$new[$i]] = $new[$i+1];
+		$new       = explode( '|', $string );
+		$new       = array_map( 'trim', $new );
+		$new       = array_values( array_filter( $new ) );
+		$new_array = array();
+		for ( $i = 0; $i < count( $new ); $i += 2 ) {
+			$new_array[ $new[ $i ] ] = $new[ $i + 1 ];
 		}
-		return $newArray;
+		return $new_array;
 	}
 
 
-	public function get_supported_languages(){
-		$string = '| ar | Arabic |
+	public function get_supported_languages() {
+		$string    = '| ar | Arabic |
 		| bg | Bulgarian |
 		| ca | Catalan |
 		| zh_cn | Chinese (Simplified) |
@@ -543,16 +533,19 @@ class GFGoogleSMSOTP extends GFAddOn {
 		| tr | Turkish |
 		| uk | Ukrainian |
 		| vi | Vietnamese |';
-		$new = explode('|',$string);
-		$new = array_map('trim', $new);
-		$new = array_values(array_filter($new));
-		$newArray = [];
-		for ($i = 0; $i < count($new); $i += 2){
-			$newArray[] = array('label'=>$new[$i+1],'value'=>$new[$i]);
+		$new       = explode( '|', $string );
+		$new       = array_map( 'trim', $new );
+		$new       = array_values( array_filter( $new ) );
+		$new_array = array();
+		for ( $i = 0; $i < count( $new ); $i += 2 ) {
+			$new_array[] = array(
+				'label' => $new[ $i + 1 ],
+				'value' => $new[ $i ],
+			);
 		}
-		return $newArray;
+		return $new_array;
 	}
-	
 
-	
+
+
 }

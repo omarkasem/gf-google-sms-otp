@@ -1,3 +1,5 @@
-jQuery(document).ready(function ($) {
-	$('.gf_sms_select2').select2();
-});
+jQuery( document ).ready(
+	function ($) {
+		$( '.gf_sms_select2' ).select2();
+	}
+);
