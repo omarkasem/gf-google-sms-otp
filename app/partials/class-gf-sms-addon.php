@@ -10,8 +10,8 @@ class GF_SMS_Addon extends \GFAddOn {
 	protected $_slug                     = 'gf-free-sms-verification';
 	protected $_path                     = 'gf_addon_class.php';
 	protected $_full_path                = __FILE__;
-	protected $_title                    = 'Gravity Forms Google SMS OTP';
-	protected $_short_title              = 'Google SMS OTP';
+	protected $_title                    = 'Gravity Forms Free SMS Verification';
+	protected $_short_title              = 'Free SMS Verification';
 
 
 	private static $_instance = null;
@@ -68,23 +68,23 @@ class GF_SMS_Addon extends \GFAddOn {
 
 		// Enqueue Styles
 		$rtl = intval( $this->get_plugin_setting( 'gf_sms_firebase_rtl' ) );
-		wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), $this->version, 'all' );
+		wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), GF_FREE_SMS_VERIFICATION_VERSION, 'all' );
 
 		if ( 1 === $rtl ) {
-			wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), $this->version, 'all' );
+			wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), GF_FREE_SMS_VERIFICATION_VERSION, 'all' );
 		}
 
 		// Enqueue Scripts
 		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
 		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
 
-		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_app', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-app.min.js', array( 'jquery' ), GF_FREE_SMS_VERIFICATION_VERSION, false );
 
-		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_auth', plugin_dir_url( __DIR__ ) . 'assets/js/firebase-auth.min.js', array( 'jquery' ), GF_FREE_SMS_VERIFICATION_VERSION, false );
 
-		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_ui_auth__' . $firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__' . $firebase_lang . '.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'firebase_ui_auth__' . $firebase_lang, 'https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__' . $firebase_lang . '.js', array( 'jquery' ), GF_FREE_SMS_VERIFICATION_VERSION, false );
 
-		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), $this->_version, false );
+		wp_enqueue_script( GF_FREE_SMS_VERIFICATION . 'public-script', plugin_dir_url( __DIR__ ) . 'assets/js/public-script.js', array( 'jquery' ), GF_FREE_SMS_VERIFICATION_VERSION, false );
 
 		$translation_array = array(
 			'firebaseConfig'     => $firebase_config,
@@ -100,7 +100,7 @@ class GF_SMS_Addon extends \GFAddOn {
 			array(
 				'handle'  => 'gf-free-sms-verification' . 'select2',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/css/select2.min.css',
-				'version' => $this->_version,
+				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
 				),
@@ -115,7 +115,7 @@ class GF_SMS_Addon extends \GFAddOn {
 			array(
 				'handle'  => 'gf-free-sms-verification' . 'select2',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/select2.min.js',
-				'version' => $this->_version,
+				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
@@ -125,7 +125,7 @@ class GF_SMS_Addon extends \GFAddOn {
 			array(
 				'handle'  => 'gf-free-sms-verification' . 'admin_script',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/admin-script.js',
-				'version' => $this->_version,
+				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'deps'    => array( 'jquery' ),
 				'enqueue' => array(
 					array( 'admin_page' => array( 'form_editor' ) ),
@@ -150,7 +150,7 @@ class GF_SMS_Addon extends \GFAddOn {
 
 	public function tooltips( $tooltips ) {
 		$simple_tooltips = array(
-			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Firebase Whitelisted Countries', 'gf-free-sms-verification' ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', 'gf-free-sms-verification' ) ),
+			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Choose the countries that will show (Leave empty to show all)', 'gf-free-sms-verification' ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', 'gf-free-sms-verification' ) ),
 		);
 
 		return array_merge( $tooltips, $simple_tooltips );
@@ -182,28 +182,35 @@ class GF_SMS_Addon extends \GFAddOn {
 		}
 	}
 
-
+	public function get_firebase_config_html(){
+		$output= '
+			Follow the steps <a href="https://wisersteps.com/docs/gravity-forms-free-sms-verification/get-firebase-config/">Here</a>
+			<br> OR <br>
+			The video <a href="https://youtu.be/GwHVKauTSuU">Here</a>
+		';
+		return $output;
+	}
 
 	public function plugin_settings_fields() {
 		return array(
 			array(
-				'title'  => esc_html__( 'Google SMS OTP', 'gf-free-sms-verification' ),
+				'title'  => esc_html__( 'Free SMS Verification', 'gf-free-sms-verification' ),
 				'fields' => array(
 					array(
-						'label'    => esc_html__( 'Firebase Config Information', 'gf-free-sms-verification' ),
+						'label'    => esc_html__( 'Firebase SDK Config', 'gf-free-sms-verification' ),
 						'type'     => 'textarea',
 						'name'     => 'gf_sms_firebase_config',
 						'required' => true,
-						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'tooltip'  => esc_html__( $this->get_firebase_config_html(), 'gf-free-sms-verification' ),
 						'class'    => 'medium merge-tag-support mt-position-right',
 					),
 
 					array(
-						'label'    => esc_html__( 'Verification Field Language', 'gf-free-sms-verification' ),
+						'label'    => esc_html__( 'SDK Language Interface', 'gf-free-sms-verification' ),
 						'type'     => 'select',
 						'name'     => 'gf_sms_firebase_language',
 						'required' => true,
-						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'tooltip'  => esc_html__( 'Language of the verification process', 'gf-free-sms-verification' ),
 						'choices'  => $this->get_supported_languages(),
 					),
 					array(
@@ -211,7 +218,7 @@ class GF_SMS_Addon extends \GFAddOn {
 						'type'     => 'radio',
 						'name'     => 'gf_sms_firebase_rtl',
 						'required' => true,
-						'tooltip'  => esc_html__( 'This is the tooltip', 'gf-free-sms-verification' ),
+						'tooltip'  => esc_html__( 'Style of the interface', 'gf-free-sms-verification' ),
 						'choices'  => array(
 							array(
 								'label' => esc_html__( 'Yes', 'gf-free-sms-verification' ),

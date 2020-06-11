@@ -79,7 +79,8 @@ class GF_SMS_Field extends \GF_Field {
 
 		// Prepare the other input attributes.
 		$tabindex              = $this->get_tabindex();
-		$logic_event           = ! $is_form_editor && ! $is_entry_detail ? $this->get_conditional_logic_event( 'keyup' ) : '';
+		$logic_event           = version_compare( \GFForms::$version, '2.4.1', '<' ) ? $this->get_conditional_logic_event( 'change' ) : '';
+
 		$placeholder_attribute = $this->get_field_placeholder_attribute();
 		$required_attribute    = $this->isRequired ? 'aria-required="true"' : '';
 		$invalid_attribute     = $this->failed_validation ? 'aria-invalid="true"' : 'aria-invalid="false"';
