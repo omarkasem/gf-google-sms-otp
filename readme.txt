@@ -31,11 +31,17 @@ Important:
 
 = Is there a documentation on how to set up the plugin? =
 
-Yes, here it is https://wisersteps.com/docs/gravity-forms-free-sms-verification/get-firebase-config/.
+Yes, here it is https://wisersteps.com/docs/gravity-forms-free-sms-verification/get-firebase-config/
 
 = Is there a video on how to set up the plugin? =
 
-Yes, here it is https://youtu.be/GwHVKauTSuU.
+Yes, here it is https://youtu.be/GwHVKauTSuU
+
+= Is there a demo for the plugin? =
+
+Yes, here it is https://wisersteps.com/sites/gf-sms/form/
+
+https://wisersteps.com/sites/gf-sms/form/
 
 == Screenshots ==
 
