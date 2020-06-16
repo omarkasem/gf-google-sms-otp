@@ -41,8 +41,6 @@ Yes, here it is https://youtu.be/GwHVKauTSuU
 
 Yes, here it is https://wisersteps.com/sites/gf-sms/form/
 
-https://wisersteps.com/sites/gf-sms/form/
-
 == Screenshots ==
 
 1. How to set up the plugin.
