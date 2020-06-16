@@ -19,56 +19,56 @@ class GF_SMS_Addon extends \GFAddOn {
 	 *
 	 * @var string
 	 */
-	protected $version = GF_FREE_SMS_VERIFICATION_VERSION;
+	protected $_version = GF_FREE_SMS_VERIFICATION_VERSION;
 
 	/**
 	 * Minimum version
 	 *
 	 * @var string
 	 */
-	protected $min_gravityforms_version = '1.9';
+	protected $_min_gravityforms_version = '1.9';
 
 	/**
 	 * Addon slug
 	 *
 	 * @var string
 	 */
-	protected $slug = 'gf-free-sms-verification';
+	protected $_slug = 'gf-free-sms-verification';
 
 	/**
 	 * Addon Path
 	 *
 	 * @var string
 	 */
-	protected $path = 'gf_addon_class.php';
+	protected $_path = 'gf_addon_class.php';
 
 	/**
 	 * Addon Full path
 	 *
 	 * @var string
 	 */
-	protected $full_path = __FILE__;
+	protected $_full_path = __FILE__;
 
 	/**
 	 * Addon Title
 	 *
 	 * @var string
 	 */
-	protected $title = 'Gravity Forms Free SMS Verification';
+	protected $_title = 'Gravity Forms Free SMS Verification';
 
 	/**
 	 * Addon short title
 	 *
 	 * @var string
 	 */
-	protected $short_title = 'SMS Verification';
+	protected $_short_title = 'Free SMS Verification';
 
 	/**
 	 * Class instance
 	 *
 	 * @var object
 	 */
-	private static $instance = null;
+	private static $_instance = null;
 
 	/**
 	 * Get class instance
@@ -76,11 +76,11 @@ class GF_SMS_Addon extends \GFAddOn {
 	 * @return object
 	 */
 	public static function get_instance() {
-		if ( null === self::$instance ) {
-			self::$instance = new self();
+		if ( null === self::$_instance ) {
+			self::$_instance = new self();
 		}
 
-		return self::$instance;
+		return self::$_instance;
 	}
 
 	/**
@@ -363,7 +363,7 @@ class GF_SMS_Addon extends \GFAddOn {
 	 * @return array
 	 */
 	public function get_supported_languages() {
-		$string    = file_get_contents( __DIR__ . '/whitelisted-countries.json' );
+		$string    = file_get_contents( __DIR__ . '/supported-countries.json' );
 		$new       = explode( '|', $string );
 		$new       = array_map( 'trim', $new );
 		$new       = array_values( array_filter( $new ) );
