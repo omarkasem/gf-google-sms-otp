@@ -1,30 +1,93 @@
 <?php
+/**
+ * Create the addon for gravity forms
+ *
+ * @package GF_Free_SMS_Verifications
+ */
+
 namespace GF_Free_SMS_Verify;
 
 \GFForms::include_addon_framework();
 
+/**
+ * Extend the GFAddon class to create an addon
+ */
 class GF_SMS_Addon extends \GFAddOn {
 
-	protected $_version                  = GF_FREE_SMS_VERIFICATION_VERSION;
-	protected $_min_gravityforms_version = '1.9';
-	protected $_slug                     = 'gf-free-sms-verification';
-	protected $_path                     = 'gf_addon_class.php';
-	protected $_full_path                = __FILE__;
-	protected $_title                    = 'Gravity Forms Free SMS Verification';
-	protected $_short_title              = 'Free SMS Verification';
+	/**
+	 * Addon Version
+	 *
+	 * @var string
+	 */
+	protected $version = GF_FREE_SMS_VERIFICATION_VERSION;
 
+	/**
+	 * Minimum version
+	 *
+	 * @var string
+	 */
+	protected $min_gravityforms_version = '1.9';
 
-	private static $_instance = null;
+	/**
+	 * Addon slug
+	 *
+	 * @var string
+	 */
+	protected $slug = 'gf-free-sms-verification';
 
+	/**
+	 * Addon Path
+	 *
+	 * @var string
+	 */
+	protected $path = 'gf_addon_class.php';
 
+	/**
+	 * Addon Full path
+	 *
+	 * @var string
+	 */
+	protected $full_path = __FILE__;
+
+	/**
+	 * Addon Title
+	 *
+	 * @var string
+	 */
+	protected $title = 'Gravity Forms Free SMS Verification';
+
+	/**
+	 * Addon short title
+	 *
+	 * @var string
+	 */
+	protected $short_title = 'SMS Verification';
+
+	/**
+	 * Class instance
+	 *
+	 * @var object
+	 */
+	private static $instance = null;
+
+	/**
+	 * Get class instance
+	 *
+	 * @return object
+	 */
 	public static function get_instance() {
-		if ( null === self::$_instance ) {
-			self::$_instance = new self();
+		if ( null === self::$instance ) {
+			self::$instance = new self();
 		}
 
-		return self::$_instance;
+		return self::$instance;
 	}
 
+	/**
+	 * Pre init addon
+	 *
+	 * @return void
+	 */
 	public function pre_init() {
 		parent::pre_init();
 
@@ -33,24 +96,33 @@ class GF_SMS_Addon extends \GFAddOn {
 		}
 	}
 
+	/**
+	 * Init admin hook
+	 *
+	 * @return void
+	 */
 	public function init_admin() {
 		parent::init_admin();
 		add_filter( 'gform_tooltips', array( $this, 'tooltips' ) );
 		add_action( 'gform_field_standard_settings', array( $this, 'my_standard_settings' ), 10, 2 );
 	}
 
-	public function localize_scripts() {
-
-		$translation_array = array(
-			'a_value' => $text,
-		);
-		wp_localize_script( 'gf_google_admin_script', 'object_name', $translation_array );
-	}
-
+	/**
+	 * Frontend init
+	 *
+	 * @return void
+	 */
 	public function init_frontend() {
 		add_action( 'gform_enqueue_scripts', array( $this, 'enq_styles_scripts' ), 10, 2 );
 	}
 
+	/**
+	 * Enqueue styles and scripts
+	 *
+	 * @param array   $form form array.
+	 * @param boolean $is_ajax plugin ajax.
+	 * @return void
+	 */
 	public function enq_styles_scripts( $form, $is_ajax ) {
 		if ( ! $this->check_plugin_options( $form ) ) {
 			return;}
@@ -66,7 +138,7 @@ class GF_SMS_Addon extends \GFAddOn {
 		if ( false === $exist ) {
 			return;}
 
-		// Enqueue Styles
+		// Enqueue Styles.
 		$rtl = intval( $this->get_plugin_setting( 'gf_sms_firebase_rtl' ) );
 		wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth.css', array(), GF_FREE_SMS_VERIFICATION_VERSION, 'all' );
 
@@ -74,7 +146,7 @@ class GF_SMS_Addon extends \GFAddOn {
 			wp_enqueue_style( GF_FREE_SMS_VERIFICATION . 'firebase-ui-auth_rtl', plugin_dir_url( __DIR__ ) . 'assets/css/firebase-ui-auth-rtl.css', array(), GF_FREE_SMS_VERIFICATION_VERSION, 'all' );
 		}
 
-		// Enqueue Scripts
+		// Enqueue Scripts.
 		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
 		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
 
@@ -94,11 +166,15 @@ class GF_SMS_Addon extends \GFAddOn {
 
 	}
 
-
+	/**
+	 * Include styles in gravity forms
+	 *
+	 * @return array
+	 */
 	public function styles() {
 		$styles = array(
 			array(
-				'handle'  => 'gf-free-sms-verification' . 'select2',
+				'handle'  => 'gf-free-sms-verification_select2',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/css/select2.min.css',
 				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'enqueue' => array(
@@ -110,10 +186,15 @@ class GF_SMS_Addon extends \GFAddOn {
 		return array_merge( parent::styles(), $styles );
 	}
 
+	/**
+	 * Include scripts in gravity forms
+	 *
+	 * @return array
+	 */
 	public function scripts() {
 		$scripts = array(
 			array(
-				'handle'  => 'gf-free-sms-verification' . 'select2',
+				'handle'  => 'gf-free-sms-verification_select2',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/select2.min.js',
 				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'deps'    => array( 'jquery' ),
@@ -123,7 +204,7 @@ class GF_SMS_Addon extends \GFAddOn {
 			),
 
 			array(
-				'handle'  => 'gf-free-sms-verification' . 'admin_script',
+				'handle'  => 'gf-free-sms-verification_admin_script',
 				'src'     => plugin_dir_url( __DIR__ ) . 'assets/js/admin-script.js',
 				'version' => GF_FREE_SMS_VERIFICATION_VERSION,
 				'deps'    => array( 'jquery' ),
@@ -136,7 +217,11 @@ class GF_SMS_Addon extends \GFAddOn {
 		return array_merge( parent::scripts(), $scripts );
 	}
 
-
+	/**
+	 * Check if plugin options exist
+	 *
+	 * @return boolean
+	 */
 	public function check_plugin_options() {
 		$firebase_config = $this->get_plugin_setting( 'gf_sms_firebase_config' );
 		$firebase_lang   = $this->get_plugin_setting( 'gf_sms_firebase_language' );
@@ -147,15 +232,27 @@ class GF_SMS_Addon extends \GFAddOn {
 	}
 
 
-
+	/**
+	 * Tooltip callback
+	 *
+	 * @param array $tooltips array of tooltips.
+	 * @return array
+	 */
 	public function tooltips( $tooltips ) {
 		$simple_tooltips = array(
-			'firebase_countries' => sprintf( '<h6>%s</h6>%s', esc_html__( 'Choose the countries that will show (Leave empty to show all)', 'gf-free-sms-verification' ), esc_html__( '<ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', 'gf-free-sms-verification' ) ),
+			'firebase_countries' => esc_html__( 'Choose the countries that will show (Leave empty to show all) <ul><li>Select the countries that will show up in the phone validation.</li><li>The first one will be the default.</li><li>Leave empty to show all countries.</li></ul>', 'gf-free-sms-verification' ),
 		);
 
 		return array_merge( $tooltips, $simple_tooltips );
 	}
 
+	/**
+	 * Register options
+	 *
+	 * @param integer $position position of the field.
+	 * @param integer $form_id id of the form.
+	 * @return void
+	 */
 	public function my_standard_settings( $position, $form_id ) {
 		if ( 250 === $position ) {
 			?>
@@ -172,7 +269,7 @@ class GF_SMS_Addon extends \GFAddOn {
 				<select class="gf_sms_select2" multiple="multiple" style="width:100%;" id="firebase_countries" onkeyup="setWhitelistedCountries(jQuery(this).val());" onchange="setWhitelistedCountries(jQuery(this).val());">
 					<?php
 					foreach ( $this->get_whitelisted_countries() as $key => $val ) {
-						echo '<option value="' . $key . '">' . $val . '</option>';
+						echo '<option value="' . esc_attr( $key ) . '">' . esc_attr( $val ) . '</option>';
 					}
 					?>
 				</select>
@@ -182,15 +279,13 @@ class GF_SMS_Addon extends \GFAddOn {
 		}
 	}
 
-	public function get_firebase_config_html(){
-		$output= '
-			Follow the steps <a href="https://wisersteps.com/docs/gravity-forms-free-sms-verification/get-firebase-config/">Here</a>
-			<br> OR <br>
-			The video <a href="https://youtu.be/GwHVKauTSuU">Here</a>
-		';
-		return $output;
-	}
 
+
+	/**
+	 * Register addon settings
+	 *
+	 * @return array
+	 */
 	public function plugin_settings_fields() {
 		return array(
 			array(
@@ -201,7 +296,12 @@ class GF_SMS_Addon extends \GFAddOn {
 						'type'     => 'textarea',
 						'name'     => 'gf_sms_firebase_config',
 						'required' => true,
-						'tooltip'  => esc_html__( $this->get_firebase_config_html(), 'gf-free-sms-verification' ),
+						'tooltip'  => esc_html__(
+							'Follow the steps <a href="https://wisersteps.com/docs/gravity-forms-free-sms-verification/get-firebase-config/">Here</a>
+						<br> OR <br>
+						The video <a href="https://youtu.be/GwHVKauTSuU">Here</a>',
+							'gf-free-sms-verification'
+						),
 						'class'    => 'medium merge-tag-support mt-position-right',
 					),
 
@@ -239,314 +339,37 @@ class GF_SMS_Addon extends \GFAddOn {
 	}
 
 
-
+	/**
+	 * Whitelisted countires
+	 *
+	 * @return array
+	 */
 	public function get_whitelisted_countries() {
-		$string    = "| AF | Afghanistan |
-		| AX | Åland Islands |
-		| AL | Albania |
-		| DZ | Algeria |
-		| AS | American Samoa |
-		| AD | Andorra |
-		| AO | Angola |
-		| AI | Anguilla |
-		| AG | Antigua and Barbuda |
-		| AR | Argentina |
-		| AM | Armenia |
-		| AW | Aruba |
-		| AC | Ascension Island |
-		| AU | Australia |
-		| AT | Austria |
-		| AZ | Azerbaijan |
-		| BS | Bahamas |
-		| BH | Bahrain |
-		| BD | Bangladesh |
-		| BB | Barbados |
-		| BY | Belarus |
-		| BE | Belgium |
-		| BZ | Belize |
-		| BJ | Benin |
-		| BM | Bermuda |
-		| BT | Bhutan |
-		| BO | Bolivia |
-		| BA | Bosnia and Herzegovina |
-		| BW | Botswana |
-		| BR | Brazil |
-		| IO | British Indian Ocean Territory |
-		| VG | British Virgin Islands |
-		| BN | Brunei |
-		| BG | Bulgaria |
-		| BF | Burkina Faso |
-		| BI | Burundi |
-		| KH | Cambodia |
-		| CM | Cameroon |
-		| CA | Canada |
-		| CV | Cape Verde |
-		| BQ | Caribbean Netherlands |
-		| KY | Cayman Islands |
-		| CF | Central African Republic |
-		| TD | Chad |
-		| CL | Chile |
-		| CN | China |
-		| CX | Christmas Island |
-		| CC | Cocos (Keeling) Islands |
-		| CO | Colombia |
-		| KM | Comoros |
-		| CD | Democratic Republic Congo |
-		| CG | Republic of Congo |
-		| CK | Cook Islands |
-		| CR | Costa Rica |
-		| CI | Côte d'Ivoire |
-		| HR | Croatia |
-		| CU | Cuba |
-		| CW | Curaçao |
-		| CY | Cyprus |
-		| CZ | Czech Republic |
-		| DK | Denmark |
-		| DJ | Djibouti |
-		| DM | Dominica |
-		| DO | Dominican Republic |
-		| TL | East Timor |
-		| EC | Ecuador |
-		| EG | Egypt |
-		| SV | El Salvador |
-		| GQ | Equatorial Guinea |
-		| ER | Eritrea |
-		| EE | Estonia |
-		| ET | Ethiopia |
-		| FK | Falkland Islands (Islas Malvinas) |
-		| FO | Faroe Islands |
-		| FJ | Fiji |
-		| FI | Finland |
-		| FR | France |
-		| GF | French Guiana |
-		| PF | French Polynesia |
-		| GA | Gabon |
-		| GM | Gambia |
-		| GE | Georgia |
-		| DE | Germany |
-		| GH | Ghana |
-		| GI | Gibraltar |
-		| GR | Greece |
-		| GL | Greenland |
-		| GD | Grenada |
-		| GP | Guadeloupe |
-		| GU | Guam |
-		| GT | Guatemala |
-		| GG | Guernsey |
-		| GN | Guinea Conakry |
-		| GW | Guinea-Bissau |
-		| GY | Guyana |
-		| HT | Haiti |
-		| HM | Heard Island and McDonald Islands |
-		| HN | Honduras |
-		| HK | Hong Kong |
-		| HU | Hungary |
-		| IS | Iceland |
-		| IN | India |
-		| ID | Indonesia |
-		| IR | Iran |
-		| IQ | Iraq |
-		| IE | Ireland |
-		| IM | Isle of Man |
-		| IL | Israel |
-		| IT | Italy |
-		| JM | Jamaica |
-		| JP | Japan |
-		| JE | Jersey |
-		| JO | Jordan |
-		| KZ | Kazakhstan |
-		| KE | Kenya |
-		| KI | Kiribati |
-		| XK | Kosovo |
-		| KW | Kuwait |
-		| KG | Kyrgyzstan |
-		| LA | Laos |
-		| LV | Latvia |
-		| LB | Lebanon |
-		| LS | Lesotho |
-		| LR | Liberia |
-		| LY | Libya |
-		| LI | Liechtenstein |
-		| LT | Lithuania |
-		| LU | Luxembourg |
-		| MO | Macau |
-		| MK | Macedonia |
-		| MG | Madagascar |
-		| MW | Malawi |
-		| MY | Malaysia |
-		| MV | Maldives |
-		| ML | Mali |
-		| MT | Malta |
-		| MH | Marshall Islands |
-		| MQ | Martinique |
-		| MR | Mauritania |
-		| MU | Mauritius |
-		| YT | Mayotte |
-		| MX | Mexico |
-		| FM | Micronesia |
-		| MD | Moldova |
-		| MC | Monaco |
-		| MN | Mongolia |
-		| ME | Montenegro |
-		| MS | Montserrat |
-		| MA | Morocco |
-		| MZ | Mozambique |
-		| MM | Myanmar (Burma) |
-		| NA | Namibia |
-		| NR | Nauru |
-		| NP | Nepal |
-		| NL | Netherlands |
-		| NC | New Caledonia |
-		| NZ | New Zealand |
-		| NI | Nicaragua |
-		| NE | Niger |
-		| NG | Nigeria |
-		| NU | Niue |
-		| NF | Norfolk Island |
-		| KP | North Korea |
-		| MP | Northern Mariana Islands |
-		| NO | Norway |
-		| OM | Oman |
-		| PK | Pakistan |
-		| PW | Palau |
-		| PS | Palestinian Territories |
-		| PA | Panama |
-		| PG | Papua New Guinea |
-		| PY | Paraguay |
-		| PE | Peru |
-		| PH | Philippines |
-		| PL | Poland |
-		| PT | Portugal |
-		| PR | Puerto Rico |
-		| QA | Qatar |
-		| RE | Réunion |
-		| RO | Romania |
-		| RU | Russia |
-		| RW | Rwanda |
-		| BL | Saint Barthélemy |
-		| SH | Saint Helena |
-		| KN | St. Kitts |
-		| LC | St. Lucia |
-		| MF | Saint Martin |
-		| PM | Saint Pierre and Miquelon |
-		| VC | St. Vincent |
-		| WS | Samoa |
-		| SM | San Marino |
-		| ST | São Tomé and Príncipe |
-		| SA | Saudi Arabia |
-		| SN | Senegal |
-		| RS | Serbia |
-		| SC | Seychelles |
-		| SL | Sierra Leone |
-		| SG | Singapore |
-		| SX | Sint Maarten |
-		| SK | Slovakia |
-		| SI | Slovenia |
-		| SB | Solomon Islands |
-		| SO | Somalia |
-		| ZA | South Africa |
-		| GS | South Georgia and the South Sandwich Islands |
-		| KR | South Korea |
-		| SS | South Sudan |
-		| ES | Spain |
-		| LK | Sri Lanka |
-		| SD | Sudan |
-		| SR | Suriname |
-		| SJ | Svalbard and Jan Mayen |
-		| SZ | Swaziland |
-		| SE | Sweden |
-		| CH | Switzerland |
-		| SY | Syria |
-		| TW | Taiwan |
-		| TJ | Tajikistan |
-		| TZ | Tanzania |
-		| TH | Thailand |
-		| TG | Togo |
-		| TK | Tokelau |
-		| TO | Tonga |
-		| TT | Trinidad/Tobago |
-		| TN | Tunisia |
-		| TR | Turkey |
-		| TM | Turkmenistan |
-		| TC | Turks and Caicos Islands |
-		| TV | Tuvalu |
-		| VI | U.S. Virgin Islands |
-		| UG | Uganda |
-		| UA | Ukraine |
-		| AE | United Arab Emirates |
-		| GB | United Kingdom |
-		| US | United States |
-		| UY | Uruguay |
-		| UZ | Uzbekistan |
-		| VU | Vanuatu |
-		| VA | Vatican City |
-		| VE | Venezuela |
-		| VN | Vietnam |
-		| WF | Wallis and Futuna |
-		| EH | Western Sahara |
-		| YE | Yemen |
-		| ZM | Zambia |
-		| ZW | Zimbabwe |
-		";
+		$string    = file_get_contents( __DIR__ . '/whitelisted-countries.json' );
 		$new       = explode( '|', $string );
 		$new       = array_map( 'trim', $new );
 		$new       = array_values( array_filter( $new ) );
 		$new_array = array();
-		for ( $i = 0; $i < count( $new ); $i += 2 ) {
+		$count     = count( $new );
+		for ( $i = 0; $i < $count; $i += 2 ) {
 			$new_array[ $new[ $i ] ] = $new[ $i + 1 ];
 		}
 		return $new_array;
 	}
 
-
+	/**
+	 * Supported countries
+	 *
+	 * @return array
+	 */
 	public function get_supported_languages() {
-		$string    = '| ar | Arabic |
-		| bg | Bulgarian |
-		| ca | Catalan |
-		| zh_cn | Chinese (Simplified) |
-		| zh_tw | Chinese (Traditional) |
-		| hr | Croatian |
-		| cs | Czech |
-		| da | Danish |
-		| nl | Dutch |
-		| en | English |
-		| en_gb | English (UK) |
-		| fa | Farsi |
-		| fil | Filipino |
-		| fi | Finnish |
-		| fr | French |
-		| de | German |
-		| el | Greek |
-		| iw | Hebrew |
-		| hi | Hindi |
-		| hu | Hungarian |
-		| id | Indonesian |
-		| it | Italian |
-		| ja | Japanese |
-		| ko | Korean |
-		| lv | Latvian |
-		| lt | Lithuanian |
-		| no | Norwegian (Bokmal) |
-		| pl | Polish |
-		| pt_br | Portuguese (Brazil) |
-		| pt_pt | Portuguese (Portugal) |
-		| ro | Romanian |
-		| ru | Russian |
-		| sr | Serbian |
-		| sk | Slovak |
-		| sl | Slovenian |
-		| es | Spanish |
-		| es_419 | Spanish (Latin America) |
-		| sv | Swedish |
-		| th | Thai |
-		| tr | Turkish |
-		| uk | Ukrainian |
-		| vi | Vietnamese |';
+		$string    = file_get_contents( __DIR__ . '/whitelisted-countries.json' );
 		$new       = explode( '|', $string );
 		$new       = array_map( 'trim', $new );
 		$new       = array_values( array_filter( $new ) );
 		$new_array = array();
-		for ( $i = 0; $i < count( $new ); $i += 2 ) {
+		$count     = count( $new );
+		for ( $i = 0; $i < $count; $i += 2 ) {
 			$new_array[] = array(
 				'label' => $new[ $i + 1 ],
 				'value' => $new[ $i ],

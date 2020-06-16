@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Gravity Forms Free SMS Verification
+ * Plugin Name: Firebase Free SMS Verification For Gravity Forms
  * Plugin URI: https://www.wisersteps.com
- * Description: Desc
+ * Description: The best free SMS verification plugin for Gravity Forms, Verify users numbers before submitting the forms, Use Google firebase to edit the sent message to phone numbers by adding your website name.
  * Version: 1.0.0
  * Author: WiserSteps
  * Author URI: https://www.wisersteps.com
